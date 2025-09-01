@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicionário AIESECer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5c0404;
+            --primary-dark: #ff0000;
+            --secondary: #030303;
+            --accent: #f85a40;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2.5rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><text x="50%" y="50%" font-size="20" text-anchor="middle" dominant-baseline="middle" fill="white">@</text></svg>');
+            opacity: 0.1;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .search-container {
+            margin: 2rem 0;
+            position: sticky;
+            top: 15px;
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 50px;
+            padding: 5px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box i {
+            color: var(--gray);
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        #search {
+            flex: 1;
+            padding: 15px 0;
+            border: none;
+            font-size: 1.1rem;
+            background: transparent;
+        }
+        
+        #search:focus {
+            outline: none;
+        }
+        
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background-color: var(--light-gray);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .dictionary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 3rem;
+        }
+        
+        .term-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .term-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(3, 126, 243, 0.03) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        .term-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .sigla {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .sigla-code {
+            background: rgba(3, 126, 243, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .significado {
+            color: var(--dark);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(133, 196, 65, 0.15);
+            color: var(--secondary);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            align-self: flex-start;
+        }
+        
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+        
+        .no-results h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 1rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 999;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+        
+        .counter {
+            margin-top: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dictionary {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .search-container {
+                padding: 15px;
+            }
+            
+            .filter-container {
+                justify-content: center;
+            }
+        }
+        
+        .highlight {
+            background-color: rgba(255, 217, 102, 0.5);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <h1>Dicionário AIESECer</h1>
+                <p class="subtitle">Encontre o significado das siglas e termos utilizados na AIESEC</p>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search" placeholder="Buscar sigla ou significado...">
+            </div>
+            
+            <div class="filter-container">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-layer-group"></i> Todas
+                </button>
+                <button class="filter-btn" data-filter="intercambio">
+                    <i class="fas fa-exchange-alt"></i> Intercâmbio
+                </button>
+                <button class="filter-btn" data-filter="cargos">
+                    <i class="fas fa-users"></i> Cargos
+                </button>
+                <button class="filter-btn" data-filter="eventos">
+                    <i class="fas fa-calendar-alt"></i> Eventos
+                </button>
+                <button class="filter-btn" data-filter="comites">
+                    <i class="fas fa-building"></i> Comitês
+                </button>
+                <button class="filter-btn" data-filter="plataformas">
+                    <i class="fas fa-desktop"></i> Plataformas
+                </button>
+            </div>
+        </div>
+        
+        <div class="counter" id="counter">Mostrando <span id="count">0</span> de <span id="total">0</span> termos</div>
+        
+        <div class="dictionary" id="dictionary">
+            <!-- Os termos serão inseridos aqui via JavaScript -->
+        </div>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <p>Dicionário AIESECer &copy; 2023 - Para todos os membros e alumni</p>
+                <div class="footer-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dados do dicionário com categorias
+        const terms = [
+            {sigla: "ABROAD", significado: "No exterior, é um cargo de lá fora como por exemplo, oGX Abroad, EST Abroad.", category: "cargos"},
+            {sigla: "ACC", significado: "Acepted, quando o intercambista está aceito na vaga", category: "intercambio"},
+            {sigla: "AI", significado: "AIESEC Internacional", category: "organizacao"},
+            {sigla: "Alumni", significado: "Ex membros da aiesec", category: "membros"},
+            {sigla: "APD", significado: "Approval. É um contrato de intercâmbio fechado.", category: "intercambio"},
+            {sigla: "APL", significado: "Aplied, quando o intercambista está aplicado na vaga", category: "intercambio"},
+            {sigla: "ATT", significado: "Attraction", category: "processos"},
+            {sigla: "B2B", significado: "Área da AIESEC responsável por vender oportunidades para ONGs, startups e empresas.", category: "areas"},
+            {sigla: "B2C", significado: "Área da AIESEC que trabalha com relacionamento com o consumidor e marketing.", category: "areas"},
+            {sigla: "Back Office", significado: "Áreas de suporte na AIESEC, não trabalham diretamente com o consumidor final.", category: "areas"},
+            {sigla: "BAZI", significado: "AIESEC no Brasil", category: "organizacao"},
+            {sigla: "Ceeder", significado: "Pessoa que representa uma entidade a nível International, onde serve como canal de capacitação e/ou informações para sua entidade local e a entidade abroad.", category: "cargos"},
+            {sigla: "CL", significado: "Comitê Local/ sua unidade da aiesec", category: "comites"},
+            {sigla: "CO", significado: "Completed. Experiência entregue com os mínimos de intercâmbio cumpridos.", category: "intercambio"},
+            {sigla: "CONADE", significado: "Conferência Nacional de Desenvolvimento, acontece em julho e é para EB, é uma conferência para replanejamento do segundo semestre.", category: "eventos"},
+            {sigla: "CONAL", significado: "Conferência Nacional, essa conferência é para EBs e ocorre em janeiro de cada ano como preparação e capacitação do time antes de iniciar a gestão.", category: "eventos"},
+            {sigla: "Conf", significado: "Conferência", category: "eventos"},
+            {sigla: "Consideration", significado: "Áreas responsáveis por fazer o processo de venda até o APD do intercambista.", category: "areas"},
+            {sigla: "CX", significado: "Times responsáveis por acompanhar os EPs após a assinatura do contrato até o final do intercâmbio.", category: "areas"},
+            {sigla: "DDL", significado: "Deadline. Prazo para que alguma atividade seja feita.", category: "processos"},
+            {sigla: "EB", significado: "Executive Board", category: "cargos"},
+            {sigla: "ECB", significado: "Entity Committee Board, da suporte a nivel nacional en questão de legalidade das entidades sobre casos de Intercâmbio", category: "organizacao"},
+            {sigla: "EP", significado: "Exchange Participant, um intercambista.", category: "intercambio"},
+            {sigla: "EST", significado: "Entity Support Team ou time de suporte nacional, dá suporte para os MCs", category: "organizacao"},
+            {sigla: "EXPA", significado: "Plataforma para aprovação e gestão das experiências", category: "plataformas"},
+            {sigla: "F&L/ FIN", significado: "Área que cuida de finanças e legalidades do escritório", category: "areas"},
+            {sigla: "Faci", significado: "Pessoa responsável por guiar uma sessão da conferência.", category: "cargos"},
+            {sigla: "Fee", significado: "É a taxa cobrada para alguma coisa, a AIESEC só usa o nome em inglês.", category: "processos"},
+            {sigla: "FI/ Finish", significado: "Quando o intercambista finaliza seu intercambio porém nao tem a entrega dos 16 standards", category: "intercambio"},
+            {sigla: "GE", significado: "Intercâmbios de Empreendedorismo Global. iGE incoming / oGE outgoing.", category: "intercambio"},
+            {sigla: "GH", significado: "Global Home, área que cuida da moradia dos intercambistas no Brasil", category: "areas"},
+            {sigla: "GM", significado: "Growth Meeting, conferencia para toda membresia da AIESEC no Brasil", category: "eventos"},
+            {sigla: "GST", significado: "Global Support Team, da suporte a nivel global e trabalha diretamente com a AI (AIESEC Internacional)", category: "organizacao"},
+            {sigla: "GT", significado: "Intercâmbios de Talento Global. iGT incoming / oGT outgoing.", category: "intercambio"},
+            {sigla: "GTa", significado: "Intercâmbios de Talento Global Teaching. iGT incoming / oGT outgoing.", category: "intercambio"},
+            {sigla: "GTK", significado: "Getting to Know, é uma apresentação sua estilo aiesec", category: "processos"},
+            {sigla: "GV", significado: "Intercâmbios de Voluntariado Global. iGV incoming / oGV outgoing.", category: "intercambio"},
+            {sigla: "ICX", significado: "Operações de recebimento de intercambistas. Incoming Experiences.", category: "areas"},
+            {sigla: "IGT", significado: "Incoming Global Talent, área que cuida do recebimento dos intercambistas profissionais do exterior", category: "areas"},
+            {sigla: "IGV", significado: "Incoming Global Volunteer, área que cuida do recebimento dos intercambistas do exterior", category: "areas"},
+            {sigla: "Insights", significado: "Aprendizado ou ideias que você tem ao longo de conversas e sessões.", category: "processos"},
+            {sigla: "IR", significado: "International Relationship, pessoa que cuida da relação com comitês externos", category: "cargos"},
+            {sigla: "IXP", significado: "International Experience, é o intercambio voltado para membros da organização", category: "intercambio"},
+            {sigla: "KPI", significado: "Key Performance Indicators", category: "processos"},
+            {sigla: "LC", significado: "Local Committee = comitê local mas em inglês, é o padrão internacional", category: "comites"},
+            {sigla: "LCP", significado: "Local Committee President, presidente", category: "cargos"},
+            {sigla: "LEAD", significado: "É a pessoa que se inscreve para fazer o intercambio e cai na nossa plataforma", category: "intercambio"},
+            {sigla: "LR", significado: "Leadership roles, papéis/cargos de liderança", category: "cargos"},
+            {sigla: "Manager", significado: "Pessoa que é especialista num assunto determinado, braço direito do VP", category: "cargos"},
+            {sigla: "MC", significado: "Diretor Nacional da AIESEC", category: "cargos"},
+            {sigla: "MCP", significado: "Presidente Nacional", category: "cargos"},
+            {sigla: "MCVP", significado: "Diretor Nacional de área a nivel nacional", category: "cargos"},
+            {sigla: "MN", significado: "Membro novo", category: "membros"},
+            {sigla: "MOS", significado: "Measures of sucess", category: "processos"},
+            {sigla: "MoS", significado: "Survey Formulário em que os EPs respondem se tiveram os mínimos de intercâmbios entregues ou não.", category: "processos"},
+            {sigla: "MP", significado: "Membro pleno( + 3 meses)", category: "membros"},
+            {sigla: "NMS", significado: "National Membership", category: "membros"},
+            {sigla: "NPM", significado: "Nacional President Meeting, conferência dos presidentes", category: "eventos"},
+            {sigla: "NST", significado: "Time Nacional de Suporte. Trabalho virtual junto com o MC para prestar suporte para a rede de CLs.", category: "organizacao"},
+            {sigla: "O2O", significado: "One To One, espaço onde você conversa sobre seu desenvolvimento", category: "processos"},
+            {sigla: "OC", significado: "Organizational Committee - É o comitê responsável por entregar a conferência.", category: "comites"},
+            {sigla: "OCP", significado: "Organizational Committee President - Guia o Comitê Organizador de uma conferência.", category: "cargos"},
+            {sigla: "OD", significado: "Organizaton Development", category: "processos"},
+            {sigla: "OGT", significado: "Outgoing Global Talent, área que cuida do envio dos intercambistas profissionais pro exterior", category: "areas"},
+            {sigla: "OGV", significado: "Outgoing Global Volunteer, área que cuida do envio dos intercambistas pro exterior", category: "areas"},
+            {sigla: "OGX", significado: "Operações de envio dos intercambistas. Outgoing experiences.", category: "areas"},
+            {sigla: "OH", significado: "Office Hours", category: "processos"},
+            {sigla: "Open", significado: "Quando o intercambista cai na plataforna e nao foi abordado, também pode ser uma vaga no expa", category: "intercambio"},
+            {sigla: "PAI", significado: "President Aiesec International", category: "cargos"},
+            {sigla: "PD", significado: "Partner development", category: "processos"},
+            {sigla: "PDP", significado: "Personal Development Plan", category: "processos"},
+            {sigla: "Pipeline", significado: "Expressão usada para demonstrar todo o processo que um cliente passa antes de se decidir por finalizar a compra com a sua empresa", category: "processos"},
+            {sigla: "PM", significado: "Área de gestão de pessoas dentro da AIESEC.", category: "areas"},
+            {sigla: "PODIO", significado: "Plataforma de gestão dos intercambistas e membresia", category: "plataformas"},
+            {sigla: "Postular", significado: "Se aplicar para algum outro cargo dentro da Aiesec", category: "processos"},
+            {sigla: "PSEL", significado: "Processo seletivo", category: "processos"},
+            {sigla: "PXP", significado: "Times responsáveis por acompanhar os EPs após a assinatura do contrato até o final do intercâmbio.", category: "areas"},
+            {sigla: "Quarter", significado: "Um trimestre", category: "processos"},
+            {sigla: "Quebra", significado: "Quando temos que fazer a quebra de um contrato", category: "processos"},
+            {sigla: "RE", significado: "Realized, quando o intercambista vai realizar sua experiência", category: "intercambio"},
+            {sigla: "RE", significado: "Realized. Pessoas que viajaram para realizar o intercâmbio.", category: "intercambio"},
+            {sigla: "ReAPD", significado: "Quando o intercambista precisa mudar a data e tem que ser aprovado novamente", category: "intercambio"},
+            {sigla: "Régua", significado: "Sua orientação sexual, dividida por numeros de 0 à 6", category: "processos"},
+            {sigla: "RI", significado: "Regimento Interno", category: "processos"},
+            {sigla: "RM", significado: "Relatório de Membresia dos CLs", category: "processos"},
+            {sigla: "RO", significado: "Regional offices, escritorios que cuidam de desenvolvimento a nivel regional", category: "organizacao"},
+            {sigla: "Roll Call", significado: "Coreografias da AIESEC para diversas músicas.", category: "eventos"},
+            {sigla: "RST", significado: "Regional Support Team, da suporte ao time Regional, (Regional Office)", category: "organizacao"},
+            {sigla: "RT", significado: "Reunião de time", category: "processos"},
+            {sigla: "Sales", significado: "Áreas responsáveis por fazer o processo de venda até o APD do intercambista.", category: "areas"},
+            {sigla: "Sessão", significado: "É um momento de troca de esperiências ou uma palestra interativa", category: "eventos"},
+            {sigla: "Spin Selling", significado: "Direciona os vendedores sobre as perguntas que devem ser feitas ao longo do processo de vendas para aumentar as taxas de conversão.", category: "processos"},
+            {sigla: "Standards", significado: "16 mínimos de intercâmbio que a AIESEC precisa entregar.", category: "intercambio"},
+            {sigla: "Status", significado: "Seu status de relacionamento, ele se divide de Open- solteiro, In Progress- Enrolado, APD(approved)- Namorando, CO(completed)- Casado", category: "processos"},
+            {sigla: "Sugar Cube", significado: "Recadinho que você deixa no envelope de outro delegado durante a conferência para ele ler em casa.", category: "eventos"},
+            {sigla: "Summit", significado: "é quando se reúnem VPs/membros de áreas específicas para dois ou três dias de capacitação ou construção de novos projetos", category: "eventos"},
+            {sigla: "TL", significado: "Team Leader, lider de time", category: "cargos"},
+            {sigla: "TLB", significado: "Team Leader Board (EB + TLs + Managers)", category: "organizacao"},
+            {sigla: "TM", significado: "Team Member- membro", category: "membros"},
+            {sigla: "TNA", significado: "Time Nacional de Auditoria", category: "organizacao"},
+            {sigla: "TS", significado: "Team Standards - Mínimos de entregas para a experiência de um membro", category: "processos"},
+            {sigla: "TUM", significado: "TUM PA Expressão usada antes de um anuncio importante ou de uma novidade.", category: "processos"},
+            {sigla: "VP", significado: "Vice President / Responsável por uma área do CL", category: "cargos"},
+            {sigla: "WT", significado: "Working Time, momento onde o time trabalha junto", category: "processos"},
+            {sigla: "@", significado: "AIESEC", category: "organizacao"},
+            {sigla: "@AB", significado: "AIESEC no ABC", category: "comites"},
+            {sigla: "@AJ", significado: "AIESEC em Aracajú", category: "comites"},
+            {sigla: "@BA", significado: "AIESEC em Bauru", category: "comites"},
+            {sigla: "@BC", significado: "AIESEC em Balneário Camboriú", category: "comites"},
+            {sigla: "@BH", significado: "AIESEC em Belo Horizonte", category: "comites"},
+            {sigla: "@BL", significado: "AIESEC em Belém", category: "comites"},
+            {sigla: "@BM", significado: "AIESEC em Blumenau", category: "comites"},
+            {sigla: "@BS", significado: "AIESEC em Brasília", category: "comites"},
+            {sigla: "@CB", significado: "AIESEC em Cuiabá", category: "comites"},
+            {sigla: "@CG", significado: "AIESEC em Campo Grande", category: "comites"},
+            {sigla: "@CH", significado: "AIESEC em Chapecó", category: "comites"},
+            {sigla: "@CT", significado: "AIESEC em Curitiba", category: "comites"},
+            {sigla: "@ES", significado: "AIESEC na ESPM", category: "comites"},
+            {sigla: "@FL", significado: "AIESEC em Florianópolis", category: "comites"},
+            {sigla: "@FO", significado: "AIESEC em Fortaleza", category: "comites"},
+            {sigla: "@FR", significado: "AIESEC em Franca", category: "comites"},
+            {sigla: "@GO", significado: "AIESEC em Goiania", category: "comites"},
+            {sigla: "@GV", significado: "AIESEC na Getúlio Vargas", category: "comites"},
+            {sigla: "@IJ", significado: "AIESEC em Itajubá", category: "comites"},
+            {sigla: "@IN", significado: "AIESEC no Insper", category: "comites"},
+            {sigla: "@JP", significado: "AIESEC em João Pessoa", category: "comites"},
+            {sigla: "@LD", significado: "AIESEC em Londrina", category: "comites"},
+            {sigla: "@LM", significado: "AIESEC em Limeira", category: "comites"},
+            {sigla: "@MA", significado: "AIESEC em Maringá", category: "comites"},
+            {sigla: "@MK", significado: "AIESEC no Mackenzie", category: "comites"},
+            {sigla: "@MN", significado: "AIESEC em Manaus", category: "comites"},
+            {sigla: "@MZ", significado: "AIESEC em Maceió", category: "comites"},
+            {sigla: "@NA", significado: "AIESEC em Natal", category: "comites"},
+            {sigla: "@PA", significado: "AIESEC em Porto Alegre", category: "comites"},
+            {sigla: "@PE", significado: "AIESEC em Pelotas", category: "comites"},
+            {sigla: "@PW", significado: "AIESEC em Palmas", category: "comites"},
+            {sigla: "@RC", significado: "AIESEC em Recife", category: "comites"},
+            {sigla: "@RJ", significado: "AIESEC no Rio De Janeiro", category: "comites"},
+            {sigla: "@SA", significado: "AIESEC em Santos", category: "comites"},
+            {sigla: "@SC", significado: "AIESEC em São Carlos", category: "comites"},
+            {sigla: "@SF", significado: "AIESEC no Vale do São Francisco", category: "comites"},
+            {sigla: "@SJ", significado: "AIESEC em São José do Rio Preto", category: "comites"},
+            {sigla: "@SL", significado: "AIESEC em São Luis", category: "comites"},
+            {sigla: "@SM", significado: "AIESEC em Santa Maria", category: "comites"},
+            {sigla: "@SO", significado: "AIESEC em Sorocaba", category: "comites"},
+            {sigla: "@SS", significado: "AIESEC em Salvador", category: "comites"},
+            {sigla: "@TE", significado: "AIESEC em Teresina", category: "comites"},
+            {sigla: "@UB", significado: "AIESEC em Uberlândia", category: "comites"},
+            {sigla: "@US", significado: "AIESEC na USP", category: "comites"},
+            {sigla: "@VC", significado: "AIESEC em Viçosa", category: "comites"},
+            {sigla: "@VP", significado: "AIESEC em Vale do Paraíba", category: "comites"},
+            {sigla: "@VR", significado: "AIESEC em Volta Redonda", category: "comites"},
+            {sigla: "@VT", significado: "AIESEC em Vitória", category: "comites"}
+        ];
+
+        // Mapeamento de categorias para exibição
+        const categoryMap = {
+            'intercambio': 'Intercâmbio',
+            'cargos': 'Cargos',
+            'eventos': 'Eventos',
+            'comites': 'Comitês',
+            'plataformas': 'Plataformas',
+            'organizacao': 'Organização',
+            'areas': 'Áreas',
+            'membros': 'Membros',
+            'processos': 'Processos'
+        };
+
+        // Função para renderizar os termos
+        function renderTerms(termsToRender, searchText = '') {
+            const dictionaryElement = document.getElementById('dictionary');
+            dictionaryElement.innerHTML = '';
+            
+            if (termsToRender.length === 0) {
+                dictionaryElement.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhum termo encontrado</h3>
+                        <p>Tente usar palavras-chave diferentes ou verifique a categoria selecionada.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            termsToRender.forEach(term => {
+                const termElement = document.createElement('div');
+                termElement.className = 'term-card';
+                
+                // Destacar texto da busca
+                let significado = term.significado;
+                if (searchText) {
+                    const regex = new RegExp(searchText, 'gi');
+                    significado = significado.replace(regex, match => `<span class="highlight">${match}</span>`);
+                }
+                
+                termElement.innerHTML = `
+                    <div class="sigla">
+                        ${term.sigla}
+                        <span class="sigla-code">${term.category ? categoryMap[term.category] : 'Geral'}</span>
+                    </div>
+                    <div class="significado">${significado}</div>
+                    <span class="category-tag">${categoryMap[term.category] || 'Geral'}</span>
+                `;
+                dictionaryElement.appendChild(termElement);
+            });
+            
+            // Atualizar contador
+            document.getElementById('count').textContent = termsToRender.length;
+        }
+        
+        // Inicializar a renderização
+        let currentFilter = 'all';
+        let currentSearch = '';
+        renderTerms(terms);
+        document.getElementById('total').textContent = terms.length;
+        document.getElementById('count').textContent = terms.length;
+        
+        // Adicionar funcionalidade de busca
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', () => {
+            currentSearch = searchInput.value.toLowerCase();
+            filterTerms();
+        });
+        
+        // Adicionar funcionalidade de filtro
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const filter = button.getAttribute('data-filter');
+                
+                // Atualizar botões ativos
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                currentFilter = filter;
+                filterTerms();
+            });
+        });
+        
+        // Função para filtrar termos com base na busca e filtro
+        function filterTerms() {
+            let filteredTerms = terms;
+            
+            // Aplicar filtro de categoria
+            if (currentFilter !== 'all') {
+                filteredTerms = filteredTerms.filter(term => term.category === currentFilter);
+            }
+            
+            // Aplicar filtro de busca
+            if (currentSearch) {
+                filteredTerms = filteredTerms.filter(term => 
+                    term.sigla.toLowerCase().includes(currentSearch) || 
+                    term.significado.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            renderTerms(filteredTerms, currentSearch);
+        }
+        
+        // Botão de voltar ao topo
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>
